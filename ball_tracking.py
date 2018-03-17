@@ -4,9 +4,9 @@ import argparse
 # import imutils
 import cv2
 import time
-import serial
+# import serial
 
-ser = serial.Serial('/dev/tty.usbserial', 9600)
+# ser = serial.Serial('/dev/tty.usbserial', 9600)
 
 
 #python 35
@@ -23,11 +23,20 @@ yellowUB = (30, 255, 255) ## set upper lower bound for color threshold
 pts = deque(maxlen=args["buffer"])
 
 if not args.get("video", False):
+    # camera = cv2.VideoCapture(0)
     camera = cv2.VideoCapture(1)
-    camera = cv2.VideoCapture(0)
     # camera.set(cv2.CAP_PROP_FPS, 15)
 
     # camera.set(cv2.CAP_PROP_FPS, 10)
+
+
+
+
+
+
+
+    #############
+    # Test Code
 
 
     # if int(major_ve)  < 3 :
@@ -102,6 +111,8 @@ for i in range(0, num_frames_2):
     if args.get("video") and not grabbed:
         break
 
+    frame = cv2.resize(frame, (800, 600))
+
     # frame = imutils.resize(frame, width=800)
     # blurred = cv2.GaussianBlur(frame, (11, 11), 0)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -135,6 +146,8 @@ for i in range(0, num_frames_2):
 
     pts.appendleft(center)
 
+    # print()
+
     for i in range(1, len(pts)):
     # if either of the tracked points are None, ignore
     # them
@@ -149,6 +162,8 @@ for i in range(0, num_frames_2):
     
     key = cv2.waitKey(1) & 0xFF
 
+
+    print(center)
     if key == ord("q"):
         break
 
