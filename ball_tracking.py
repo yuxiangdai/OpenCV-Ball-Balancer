@@ -1,9 +1,15 @@
 from collections import deque
 import numpy as np
 import argparse
-import imutils
+# import imutils
 import cv2
 import time
+import serial
+
+ser = serial.Serial('/dev/tty.usbserial', 9600)
+
+
+#python 35
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
@@ -96,7 +102,7 @@ for i in range(0, num_frames_2):
     if args.get("video") and not grabbed:
         break
 
-    frame = imutils.resize(frame, width=800)
+    # frame = imutils.resize(frame, width=800)
     # blurred = cv2.GaussianBlur(frame, (11, 11), 0)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
