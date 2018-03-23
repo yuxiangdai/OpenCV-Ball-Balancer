@@ -7,6 +7,20 @@ colors = []
 lower = np.array([0, 0, 0])
 upper = np.array([0, 0, 0])
 
+
+# cap = cv2.VideoCapture(0) # video capture source camera (Here webcam of laptop) 
+# ret,frame = cap.read() # return a single frame in variable `frame`
+
+# while(True):
+#     ret,frame = cap.read()
+#     cv2.imshow('img1',frame) #display the captured image
+#     if cv2.waitKey(1) & 0xFF == ord('y'): #save on pressing 'y' 
+#         cv2.imwrite('image.png',frame)
+#         cv2.destroyAllWindows()
+#         break
+
+# cap.release()
+
 def on_mouse_click(event, x, y, flags, image):
     if event == cv2.EVENT_LBUTTONUP:
         colors.append(image[y,x].tolist())
@@ -16,7 +30,7 @@ def on_trackbar_change(position):
 
 # Parse command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--image", required=True, help="path to the image file")
+parser.add_argument("-i", "--image", help="path to the image file")
 parser.add_argument("-l", "--lower", help="HSV lower bounds")
 parser.add_argument("-u", "--upper", help="HSV upper bounds")
 args = vars(parser.parse_args())
@@ -27,7 +41,11 @@ if args["lower"] and args["upper"]:
   upper = np.fromstring(args["upper"], sep=",")
 
 # Load image, resize to 600 width, and convert color to HSV
-image = cv2.imread(args["image"])
+
+if args["image"]:
+    image = cv2.imread(args["image"])
+else:
+    image = cv2.imread("image.png")
 image = imutils.resize(image, width=600)
 hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
@@ -63,8 +81,11 @@ while True:
     # Show range mask
     cv2.imshow("mask", mask)
 
+
+    # print(str(lower[0]) + "," + str(lower[1]) + "," + str(lower[2]) + " " + str(upper[0]) + "," + str(upper[1]) + "," + str(upper[2]))
     # Press q to exit
     if cv2.waitKey(1) & 0xFF == ord("q"):
+        print(str(lower[0]) + "," + str(lower[1]) + "," + str(lower[2]) + " " + str(upper[0]) + "," + str(upper[1]) + "," + str(upper[2])) 
         break
 
 cv2.destroyAllWindows()
@@ -80,4 +101,4 @@ maxh = max(c[0] for c in colors)
 maxs = max(c[1] for c in colors)
 maxv = max(c[2] for c in colors)
 
-print [minh, mins, minv], [maxh, maxs, maxv]
+print(minh, mins, minv, maxh, maxs, maxv)

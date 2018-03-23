@@ -1,7 +1,7 @@
 from collections import deque
 import numpy as np
 import argparse
-# import imutils
+import imutils
 import cv2
 import time
 # import serial
@@ -16,15 +16,26 @@ ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=64, help="max buffer size")
 args = vars(ap.parse_args())
 
-yellowLB = (20, 100, 100)
-yellowUB = (30, 255, 255) ## set upper lower bound for color threshold 
+lowerBound = (20, 100, 100)
+# lowerBound = (19, 40, 86)
+
+
+# for orange pingpong ball
+# 0,0,143 255,255,255
+
+
+
+
+upperBound = (30, 255, 255) ## set upper lower bound for color threshold 
+# upperBound = (174, 255, 240) ## set upper lower bound for color threshold 
+
 # greenLower = (51, 60, 60)
 # greenUpper = (64, 255, 255)
 pts = deque(maxlen=args["buffer"])
 
 if not args.get("video", False):
     # camera = cv2.VideoCapture(0)
-    camera = cv2.VideoCapture(1)
+    camera = cv2.VideoCapture(0)
     # camera.set(cv2.CAP_PROP_FPS, 15)
 
     # camera.set(cv2.CAP_PROP_FPS, 10)
@@ -77,8 +88,8 @@ j = 0
 start = time.time()
 num_frames_2 = 120
 
-# while True:
-for i in range(0, num_frames_2):
+while True:
+# for i in range(0, num_frames_2):
 
     # j += 1
     # if(j % 120 == 0):
@@ -111,13 +122,13 @@ for i in range(0, num_frames_2):
     if args.get("video") and not grabbed:
         break
 
-    frame = cv2.resize(frame, (800, 600))
+    # frame = cv2.resize(frame, (800, 800))
 
-    # frame = imutils.resize(frame, width=800)
+    frame = imutils.resize(frame, width=800)
     # blurred = cv2.GaussianBlur(frame, (11, 11), 0)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    mask = cv2.inRange(hsv, yellowLB, yellowUB)
+    mask = cv2.inRange(hsv, lowerBound, upperBound)
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
 
