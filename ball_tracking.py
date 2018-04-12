@@ -4,56 +4,31 @@ import argparse
 import imutils
 import cv2
 import time
+import matplotlib.pyplot as plt
 # import serial
 
-# ser = serial.Serial('/dev/tty.usbserial', 9600)
-
+# ser = serial.Serial('/dev/cu.usbmodem1411', 115200)
+# /dev/cu.usbmodem1411
 
 #python 35
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video", help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=64, help="max buffer size")
+# ap.add_argument("-p", "--port", help="port for the serial connection")
 args = vars(ap.parse_args())
-
-lowerBound = (20, 100, 100)
-# lowerBound = (19, 40, 86)
-
 
 # for orange pingpong ball
 # 0,0,143 255,255,255
-
-
-
-
-upperBound = (30, 255, 255) ## set upper lower bound for color threshold 
-# upperBound = (174, 255, 240) ## set upper lower bound for color threshold 
-
-# greenLower = (51, 60, 60)
-# greenUpper = (64, 255, 255)
+# 0,111,209 255,206,255
+lowerBound = (0, 111, 209)
+lowerBound = (0, 182, 162)
+# 0,182,162 255,255,255
+upperBound = (255, 206, 255) ## set upper lower bound for color threshold 
+upperBound = (255, 255, 255) ## set upper lower bound for color threshold 
 pts = deque(maxlen=args["buffer"])
 
-if not args.get("video", False):
-    # camera = cv2.VideoCapture(0)
-    camera = cv2.VideoCapture(0)
-    # camera.set(cv2.CAP_PROP_FPS, 15)
-
-    # camera.set(cv2.CAP_PROP_FPS, 10)
-
-
-
-
-
-
-
-    #############
-    # Test Code
-
-
-    # if int(major_ve)  < 3 :
-    #     fps = video.get(cv2.cv.CV_CAP_PROP_FPS)
-    #     print "Frames per second using video.get(cv2.cv.CV_CAP_PROP_FPS): {0}".format(fps)
-    # else :
+def testFPS():
     test = camera.get(cv2.CAP_PROP_FPS)
     print("Frames per second should be : {0}".format(test))
 
@@ -63,11 +38,11 @@ if not args.get("video", False):
 
     # Start time
     start = time.time()
-        
+
     # Grab a few frames
     for i in range(0, num_frames):
         ret, frame = camera.read()
-        
+
     # End time
     end = time.time()
 
@@ -78,6 +53,17 @@ if not args.get("video", False):
     # Calculate frames per second
     fps  = num_frames / seconds;
     print("Estimated frames per second : {0}".format(fps))
+
+if not args.get("video", False):
+    camera = cv2.VideoCapture(0)
+    # camera.set(cv2.CAP_PROP_FPS, 15)
+
+    # if int(major_ve)  < 3 :
+    #     fps = video.get(cv2.cv.CV_CAP_PROP_FPS)
+    #     print "Frames per second using video.get(cv2.cv.CV_CAP_PROP_FPS): {0}".format(fps)
+    # else :
+    
+    # testFPS()
 else:
     camera = cv2.VideoCapture(args["video"])
 
@@ -86,20 +72,16 @@ else:
 i = 0 
 j = 0
 start = time.time()
-num_frames_2 = 120
+num_frames_2 = 1200
+x_arr = []
+y_arr = []
 
+
+# while True:
 while True:
-# for i in range(0, num_frames_2):
 
-    # j += 1
-    # if(j % 120 == 0):
-    #     j = 0
-    #     end = time.time()
-    #     seconds = end - start
-    #     print("Simulated fps:", 120 / seconds)
-    #     start = end  ## this ignores the time it takes to print statement
-      
     (grabbed, frame) = camera.read()
+    j += 1
     # # this is really dumb fix it
     # if(i == 1):
     #     i = 0
@@ -122,9 +104,8 @@ while True:
     if args.get("video") and not grabbed:
         break
 
-    # frame = cv2.resize(frame, (800, 800))
-
     frame = imutils.resize(frame, width=800)
+    # frame = cv2.resize(frame, (640, 480))
     # blurred = cv2.GaussianBlur(frame, (11, 11), 0)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -136,11 +117,6 @@ while True:
     center = None
 
     if len(cnts) > 0:
-# find the largest contour in the mask, then use
-		# it to compute the minimum enclosing circle and
-        # find the largest contour in the mask, then use
-        # it to compute the minimum enclosing circle and
-        # centroid
         c = max(cnts, key=cv2.contourArea)
         ((x, y), radius) = cv2.minEnclosingCircle(c)
         M = cv2.moments(c)
@@ -157,8 +133,6 @@ while True:
 
     pts.appendleft(center)
 
-    # print()
-
     for i in range(1, len(pts)):
     # if either of the tracked points are None, ignore
     # them
@@ -171,17 +145,79 @@ while True:
     cv2.imshow("Frame", frame)
     # cv2.imshow("Mask", mask)
     
+    if center is None:
+        str_x, str_y = "x---", "y---"
+    else:
+        str_x, str_y = "x{:03d}".format(center[0]), "y{:03d}".format(center[1])
+
+    
+    # print(j, str_x, str_y)
+    x_arr.append(int(str_x[1:]))
+    y_arr.append(int(str_y[1:]))
+    # ser.write(str_x.encode())
+    # ser.write(str_y.encode())
+    
+
     key = cv2.waitKey(1) & 0xFF
 
-
-    print(center)
     if key == ord("q"):
         break
 
 end = time.time()
 seconds = end - start
-print("Simulated fps:", num_frames_2 / seconds)
+print("Simulated fps:", i / seconds)
 
+x_arr_np = np.array(x_arr)
+x_arr_np = x_arr_np /  (i / seconds)
+y_arr_np = np.array(y_arr)
+y_arr_np = y_arr_np /  (i / seconds)
+
+fps = int(i / seconds)
+
+plt.figure(1)
+
+
+plt.subplot(211)
+plt.title('Vertical Position')
+# plt.xlabel('Frame Number @ 30FPS')
+plt.ylabel('Position')
+# plt.axhline(y=300, linewidth=1, color='r', ls='--', label="error")
+plt.plot(range((len(x_arr))), x_arr,label="actual")
+
+fs = 100 # sample rate 
+f = 0.8 # the frequency of the signal
+x = np.arange(len(x_arr))
+
+y = [ 40*np.sin(2*np.pi*f * (i/fs) + 2) + 273 - x_arr[i] for i in x]
+# plt.plot(x,y, linewidth=1, color='r', ls='--', label="reference")
+plt.legend()
+
+
+
+
+
+plt.subplot(212)
+plt.title('Horizontal Position')
+
+
+plt.xlabel('Frame Number @ 30FPS') 
+plt.ylabel('Position')
+# plt.axhline(y=238, linewidth=1, color='r', ls='--', label="reference")
+
+
+fs = 100
+ # sample rate 
+f = 0.78 # the frequency of the signal
+x = np.arange(len(x_arr))
+y = [ 40*np.sin(2*np.pi*f * (i/fs) + np.pi*0.32) + 220 - y_arr[i] for i in x]
+plt.plot(range(len(x_arr)), y_arr, label="actual")
+# plt.plot(x,y, linewidth=1, color='r', ls='--', label="error")
+
+
+plt.legend()
+# plt.yticks(np.linspace(min(x), max(x)+1, 5.0))
+
+plt.show()
 
 camera.release()
 cv2.destroyAllWindows()

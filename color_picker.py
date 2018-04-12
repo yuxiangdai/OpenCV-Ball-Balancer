@@ -8,18 +8,18 @@ lower = np.array([0, 0, 0])
 upper = np.array([0, 0, 0])
 
 
-# cap = cv2.VideoCapture(0) # video capture source camera (Here webcam of laptop) 
-# ret,frame = cap.read() # return a single frame in variable `frame`
+cap = cv2.VideoCapture(0) # video capture source camera (Here webcam of laptop) 
+ret,frame = cap.read() # return a single frame in variable `frame`
 
-# while(True):
-#     ret,frame = cap.read()
-#     cv2.imshow('img1',frame) #display the captured image
-#     if cv2.waitKey(1) & 0xFF == ord('y'): #save on pressing 'y' 
-#         cv2.imwrite('image.png',frame)
-#         cv2.destroyAllWindows()
-#         break
+while(True):
+    ret,frame = cap.read()
+    cv2.imshow('img1',frame) #display the captured image
+    if cv2.waitKey(1) & 0xFF == ord('y'): #save on pressing 'y' 
+        cv2.imwrite('image.png',frame)
+        cv2.destroyAllWindows()
+        break
 
-# cap.release()
+cap.release()
 
 def on_mouse_click(event, x, y, flags, image):
     if event == cv2.EVENT_LBUTTONUP:
