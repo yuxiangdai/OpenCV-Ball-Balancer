@@ -11,4 +11,4 @@ Balancing a Ping Pong ball with Arduino and OpenCV
 
 <img src="ball.png" alt="Ball"/>
 
-![](https://media.giphy.com/media/KXslva2yYlr8kSTwgS/giphy.gif)
+<iframe src="https://giphy.com/embed/KXslva2yYlr8kSTwgS" width="468" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/KXslva2yYlr8kSTwgS">via GIPHY</a></p>
