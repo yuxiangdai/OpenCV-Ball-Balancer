@@ -10,4 +10,4 @@ Balancing a Ping Pong ball with Arduino and OpenCV
 4. Graphical output of time-response characteristics for control tuning
 
 <img src="ball.png" alt="Ball"/>
-<img src="https://media.giphy.com/media/KXslva2yYlr8kSTwgS/giphy.gif" alt="Video"/>
+<img src="giphy.gif" alt="Video"/>
